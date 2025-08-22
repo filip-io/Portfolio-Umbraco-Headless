@@ -22,15 +22,15 @@ jobs:
 
       # 3. Restore dependencies
       - name: Restore
-        run: dotnet restore ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj
+        run: dotnet restore Portfolio-Umbraco-Headless.csproj
 
       # 4. Build the project
       - name: Build
-        run: dotnet build ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj --configuration Release --no-restore
+        run: dotnet build Portfolio-Umbraco-Headless.csproj --configuration Release --no-restore
 
       # 5. Publish the project to ./publish
       - name: Publish
-        run: dotnet publish ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj --configuration Release --output ./publish --no-build
+        run: dotnet publish Portfolio-Umbraco-Headless.csproj --configuration Release --output ./publish --no-build
 
       # 6. Create ZIP for Run-From-Package
       - name: Create ZIP for deployment
