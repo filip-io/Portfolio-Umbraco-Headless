@@ -28,11 +28,30 @@ jobs:
       - name: Build
         run: dotnet build Portfolio-Umbraco-Headless.csproj --configuration Release --no-restore
       
-      # 5. Publish the project to ./publish
+      # 5. Publish the project to ./publish (optimized)
       - name: Publish
-        run: dotnet publish Portfolio-Umbraco-Headless.csproj --configuration Release --output ./publish --no-build
+        run: dotnet publish Portfolio-Umbraco-Headless.csproj --configuration Release --output ./publish --no-build --self-contained false --verbosity minimal
       
-      # 6. Deploy directly without ZIP (more reliable)
+      # 6. Clean up published files to reduce size
+      - name: Clean up package
+        run: |
+          Remove-Item -Recurse -Force ./publish/refs -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/cs -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/de -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/es -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/fr -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/it -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/ja -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/ko -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/pl -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/pt-BR -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/ru -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/tr -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/zh-Hans -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force ./publish/zh-Hant -ErrorAction SilentlyContinue
+        shell: pwsh
+      
+      # 7. Deploy directly without ZIP (more reliable)
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
