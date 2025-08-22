@@ -1,4 +1,4 @@
-name: Build and Deploy Umbraco Backend
+name: Build and Deploy Umbraco Backend (Run-From-Package)
 
 on:
   push:
@@ -9,8 +9,6 @@ on:
 jobs:
   build:
     runs-on: windows-latest
-    permissions:
-      contents: read
 
     steps:
       # 1. Checkout repository
@@ -24,39 +22,42 @@ jobs:
 
       # 3. Restore dependencies
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj
 
       # 4. Build the project
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj --configuration Release --no-restore
 
       # 5. Publish the project to ./publish
       - name: Publish
-        run: dotnet publish --configuration Release --output ./publish --no-build
+        run: dotnet publish ./Portfolio-Umbraco-Headless/Portfolio-Umbraco-Headless.csproj --configuration Release --output ./publish --no-build
 
-      # 6. Upload published files as artifact
+      # 6. Create ZIP for Run-From-Package
+      - name: Create ZIP for deployment
+        run: powershell Compress-Archive -Path ./publish/* -DestinationPath ./umbraco_publish.zip
+
+      # 7. Upload ZIP artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: umbraco-publish
-          path: ./publish
+          name: umbraco-zip
+          path: ./umbraco_publish.zip
 
   deploy:
     runs-on: windows-latest
     needs: build
 
     steps:
-      # 1. Download published artifact
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+      # 1. Download ZIP artifact
+      - uses: actions/download-artifact@v4
         with:
-          name: umbraco-publish
-          path: ./publish
+          name: umbraco-zip
+          path: ./deploy
 
-      # 2. Deploy to Azure Web App using publish profile
+      # 2. Deploy to Azure using Run-From-Package
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'portfolio-umbraco-backend'
-          package: ./publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF430EAD3F24445EB3B5D373B0A38494 }}
+          package: ./deploy/umbraco_publish.zip
