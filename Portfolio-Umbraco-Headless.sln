@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36408.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Portfolio-Umbraco-Headless", "Portfolio-Umbraco-Headless.csproj", "{50BD76ED-3194-4D66-8DBE-8265D4C14084}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{50BD76ED-3194-4D66-8DBE-8265D4C14084}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50BD76ED-3194-4D66-8DBE-8265D4C14084}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50BD76ED-3194-4D66-8DBE-8265D4C14084}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50BD76ED-3194-4D66-8DBE-8265D4C14084}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {55ED406E-0839-492A-BB2B-85485A9BA694}
+	EndGlobalSection
+EndGlobal
