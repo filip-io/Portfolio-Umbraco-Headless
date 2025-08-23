@@ -1,0 +1,76 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
+name: Build and deploy ASP.Net Core app to Azure Web App - portfolio-umbraco-backend
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '9.x'
+  DOTNET_ROOT: ${{ github.workspace }}/.dotnet
+  PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_NAME }}
+
+      - name: Build with dotnet
+        run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
+
+      - name: Publish optimized package
+        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
+
+      - name: Clean up package
+        run: |
+          # Remove unnecessary files to reduce deployment size
+          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/assets" -ErrorAction SilentlyContinue
+          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.map" -Recurse -File | Remove-Item -Force
+          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb" -Recurse -File | Remove-Item -Force
+
+      - name: Upload artifact for deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-app
+          path: ${{ env.DOTNET_ROOT }}/myapp
+
+  deploy:
+    runs-on: windows-latest
+    needs: build
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
+    steps:
+      - name: Download artifact from build job
+        uses: actions/download-artifact@v4
+        with:
+          name: dotnet-app
+          path: .
+
+      - name: Deploy to Azure Web App
+        id: deploy-to-webapp
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'portfolio-umbraco-backend'
+          slot-name: 'Production'
+          package: .
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF430EAD3F24445EB3B5D373B0A38494 }}
