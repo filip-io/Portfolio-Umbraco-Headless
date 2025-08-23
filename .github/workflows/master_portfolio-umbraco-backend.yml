@@ -9,42 +9,74 @@ on:
       - master
   workflow_dispatch:
 
+env:
+  DOTNET_VERSION: '9.x'
+  DOTNET_ROOT: ${{ github.workspace }}/.dotnet
+  PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
+
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Setup .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore ${{ env.PROJECT_NAME }}
 
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
+      - name: Publish optimized package
+        run: dotnet publish ${{ env.PROJECT_NAME }} --configuration Release --output "${{ env.DOTNET_ROOT }}/myapp" --no-restore
 
-      - name: Upload artifact for deployment job
+      - name: Create required Umbraco directories
+        run: |
+          # Create required Umbraco directories
+          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/wwwroot/media" -ItemType Directory -Force
+          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/App_Data" -ItemType Directory -Force
+          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/umbraco/Data" -ItemType Directory -Force
+          
+          # Create placeholder files to ensure directories are preserved
+          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/wwwroot/media/.gitkeep" -ItemType File -Force
+          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/App_Data/.gitkeep" -ItemType File -Force
+
+      - name: Clean up package
+        run: |
+          # Remove unnecessary files to reduce deployment size
+          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/assets" -ErrorAction SilentlyContinue
+          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.map" -Recurse -File | Remove-Item -Force
+          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb" -Recurse -File | Remove-Item -Force
+
+      - name: Upload artifact for deployment
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: dotnet-app
+          path: ${{ env.DOTNET_ROOT }}/myapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-    
+    environment:
+      name: 'Production'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: dotnet-app
+          path: .
+
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
