@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '8.x'
+  DOTNET_VERSION: '9.x'
   DOTNET_ROOT: ${{ github.workspace }}/.dotnet
   PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
 
@@ -35,18 +35,15 @@ jobs:
       - name: Publish
         run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
 
-      - name: Clean up published package (optimized for Free F1)
+      - name: Clean up published package (safe for Free F1)
         run: |
-          # 1️⃣ Remove debug & source files
+          # Remove debug symbols, XML docs, and JS maps
           Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb","*.xml","*.map" -Recurse -File | Remove-Item -Force
 
-          # 2️⃣ Remove Umbraco developer docs
+          # Remove Umbraco dev docs
           Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
 
-          # 3️⃣ Optional: remove demo/test JS if headless only
-          # Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/wwwroot/js/demo" -ErrorAction SilentlyContinue
-
-          # 4️⃣ Optional: check folder size
+          # Optional: check folder size
           Write-Host "Published folder size (MB):"
           (Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
 
