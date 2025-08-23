@@ -25,6 +25,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup .NET Core
+
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -36,18 +37,11 @@ jobs:
         run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
 
       - name: Publish optimized package
-        run: dotnet publish ${{ env.PROJECT_NAME }} --configuration Release --output "${{ env.DOTNET_ROOT }}/myapp" --no-restore
+        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
 
-      - name: Create required Umbraco directories
-        run: |
-          # Create required Umbraco directories
-          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/wwwroot/media" -ItemType Directory -Force
-          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/App_Data" -ItemType Directory -Force
-          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/umbraco/Data" -ItemType Directory -Force
-          
-          # Create placeholder files to ensure directories are preserved
-          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/wwwroot/media/.gitkeep" -ItemType File -Force
-          New-Item -Path "${{ env.DOTNET_ROOT }}/myapp/App_Data/.gitkeep" -ItemType File -Force
+
+
+
 
       - name: Clean up package
         run: |
