@@ -9,63 +9,42 @@ on:
       - master
   workflow_dispatch:
 
-env:
-  DOTNET_VERSION: '9.x'
-  DOTNET_ROOT: ${{ github.workspace }}/.dotnet
-  PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
-
 jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup .NET Core
+      - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
-      - name: Restore dependencies
-        run: dotnet restore ${{ env.PROJECT_NAME }}
+          dotnet-version: '9.x'
 
       - name: Build with dotnet
-        run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
+        run: dotnet build --configuration Release
 
-      - name: Publish optimized package
-        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
+      - name: dotnet publish
+        run: dotnet publish -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 
-      - name: Clean up package
-        run: |
-          # Remove unnecessary files to reduce deployment size
-          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/assets" -ErrorAction SilentlyContinue
-          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.map" -Recurse -File | Remove-Item -Force
-          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb" -Recurse -File | Remove-Item -Force
-
-      - name: Upload artifact for deployment
+      - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
-          name: dotnet-app
-          path: ${{ env.DOTNET_ROOT }}/myapp
+          name: .net-app
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
+    
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
-          name: dotnet-app
-          path: .
-
+          name: .net-app
+      
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
