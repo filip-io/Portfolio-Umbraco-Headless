@@ -1,6 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
 name: Build and deploy ASP.Net Core app to Azure Web App - portfolio-umbraco-backend
 
 on:
@@ -10,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '9.x'
+  DOTNET_VERSION: '8.x'
   DOTNET_ROOT: ${{ github.workspace }}/.dotnet
   PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
 
@@ -24,8 +21,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup .NET Core
-
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
@@ -33,25 +29,28 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore ${{ env.PROJECT_NAME }}
 
-      - name: Build with dotnet
+      - name: Build
         run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
 
-      - name: Publish optimized package
+      - name: Publish
         run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
 
-
-
-
-
-      - name: Clean up package
+      - name: Clean up published package (optimized for Free F1)
         run: |
-          # Remove unnecessary files to reduce deployment size
-          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
-          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/assets" -ErrorAction SilentlyContinue
-          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.map" -Recurse -File | Remove-Item -Force
-          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb" -Recurse -File | Remove-Item -Force
+          # 1️⃣ Remove debug & source files
+          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb","*.xml","*.map" -Recurse -File | Remove-Item -Force
 
-      - name: Upload artifact for deployment
+          # 2️⃣ Remove Umbraco developer docs
+          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
+
+          # 3️⃣ Optional: remove demo/test JS if headless only
+          # Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/wwwroot/js/demo" -ErrorAction SilentlyContinue
+
+          # 4️⃣ Optional: check folder size
+          Write-Host "Published folder size (MB):"
+          (Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: dotnet-app
@@ -65,7 +64,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
+      - name: Download artifact
         uses: actions/download-artifact@v4
         with:
           name: dotnet-app
