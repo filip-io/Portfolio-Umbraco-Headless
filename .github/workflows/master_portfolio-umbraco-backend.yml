@@ -8,11 +8,10 @@ on:
 
 env:
   DOTNET_VERSION: '9.x'
-  DOTNET_ROOT: ${{ github.workspace }}/.dotnet
   PROJECT_NAME: 'Portfolio-Umbraco-Headless.csproj'
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: windows-latest
     permissions:
       contents: read
@@ -32,46 +31,25 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
 
-      - name: Publish
-        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o "${{ env.DOTNET_ROOT }}/myapp" /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
+      - name: Publish to folder
+        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o ./publish /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
 
-      - name: Clean up published package (safe for Free F1)
+      - name: Clean up published package
         run: |
           # Remove debug symbols, XML docs, and JS maps
-          Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Include "*.pdb","*.xml","*.map" -Recurse -File | Remove-Item -Force
+          Get-ChildItem "./publish" -Include "*.pdb","*.xml","*.map" -Recurse -File | Remove-Item -Force
 
           # Remove Umbraco dev docs
-          Remove-Item -Recurse -Force "${{ env.DOTNET_ROOT }}/myapp/umbraco/docs" -ErrorAction SilentlyContinue
+          Remove-Item -Recurse -Force "./publish/umbraco/docs" -ErrorAction SilentlyContinue
 
           # Optional: check folder size
           Write-Host "Published folder size (MB):"
-          (Get-ChildItem "${{ env.DOTNET_ROOT }}/myapp" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: dotnet-app
-          path: ${{ env.DOTNET_ROOT }}/myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: dotnet-app
-          path: .
+          (Get-ChildItem "./publish" -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'portfolio-umbraco-backend'
           slot-name: 'Production'
-          package: .
+          package: ./publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF430EAD3F24445EB3B5D373B0A38494 }}
