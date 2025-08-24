@@ -36,6 +36,19 @@ builder.CreateUmbracoBuilder()
 var app = builder.Build();
 await app.BootUmbracoAsync();
 
+// --- Diagnostic snippet for Azure configuration ---
+var config = app.Services.GetRequiredService<IConfiguration>();
+
+var value = config["Umbraco:CMS:StorageProviders:AzureBlob:Media:UseDefaultRoute"];
+Console.WriteLine($"[DIAGNOSTIC] UseDefaultRoute = {value}");
+
+var section = config.GetSection("Umbraco:CMS:StorageProviders:AzureBlob:Media");
+foreach (var kv in section.GetChildren())
+{
+    Console.WriteLine($"[DIAGNOSTIC] {kv.Key} = {kv.Value}");
+}
+// --- end diagnostic ---
+
 app.UseHttpsRedirection();
 
 // Apply CORS
