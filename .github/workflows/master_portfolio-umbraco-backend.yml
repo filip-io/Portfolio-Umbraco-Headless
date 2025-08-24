@@ -32,7 +32,7 @@ jobs:
         run: dotnet build ${{ env.PROJECT_NAME }} --configuration Release --no-restore
 
       - name: Publish to folder
-        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o ./publish /p:PublishProfile=Properties/PublishProfiles/Release-Azure.pubxml
+        run: dotnet publish ${{ env.PROJECT_NAME }} -c Release -o ./publish
 
       - name: Clean up published package
         run: |
@@ -53,3 +53,4 @@ jobs:
           slot-name: 'Production'
           package: ./publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF430EAD3F24445EB3B5D373B0A38494 }}
+
