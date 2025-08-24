@@ -31,8 +31,8 @@ builder.CreateUmbracoBuilder()
        .AddWebsite()
        .AddDeliveryApi()
        .AddComposers()
-       .AddAzureBlobMediaFileSystem()
-       .AddAzureBlobImageSharpCache()
+       //.AddAzureBlobMediaFileSystem()
+       //.AddAzureBlobImageSharpCache()
        .Build();
 
 var app = builder.Build();
