@@ -50,7 +50,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'portfolio-umbraco-backend'
-          slot-name: 'Production'
           package: ./publish
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_DF430EAD3F24445EB3B5D373B0A38494 }}
+
 
