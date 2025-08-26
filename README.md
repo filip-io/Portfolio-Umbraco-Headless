@@ -24,6 +24,14 @@ Media and content are stored in **Azure Blob Storage** and **Azure SQL Database*
 
 ---
 
+
+## ​🌐 Live Demo
+
+🔗 [Visit my Portfolio](https://filip-io.github.io/Portfolio-Umbraco-React/)
+
+&nbsp;
+
+
 ## 🛠️ Tech Stack  
  
 - 🟣 **Platform:** [ASP.NET Core (.NET 9)](https://dotnet.microsoft.com/)  
@@ -41,7 +49,8 @@ Media and content are stored in **Azure Blob Storage** and **Azure SQL Database*
   - `Umbraco.StorageProviders.AzureBlob.ImageSharp` (image cache)  
   - `uSync` (configuration & content sync)  
 
----
+
+&nbsp;
 
 ## ✨ Features  
 
@@ -50,7 +59,9 @@ Media and content are stored in **Azure Blob Storage** and **Azure SQL Database*
 - Content & configuration stored in **Azure SQL Database**  
 - Configurable via **Umbraco Backoffice**   
 
----
+
+&nbsp;
+
 
 ## 📦 Installation & Setup  
 
