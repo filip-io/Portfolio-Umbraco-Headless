@@ -7,13 +7,14 @@
 [![Azure SQL](https://img.shields.io/badge/Azure%20SQL-Database-0078D4?logo=microsoftazure&logoColor=white)](https://learn.microsoft.com/en-us/azure/azure-sql/)
 [![Azure Blob Storage](https://img.shields.io/badge/Azure%20Blob-Storage-0078D4?logo=microsoftazure&logoColor=white)](https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blobs-introduction)
 
+
 ---
 
 ## 📖 Intro  
 
 This repository contains the **backend** project for my [Dynamic Portfolio v3 project](https://github.com/filip-io/Portfolio-Umbraco-React). 
 
-It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **Headless Delivery API** consumed by the frontend. Media and content are stored in **Azure Blob Storage** and **Azure SQL Database**.
+It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **Headless Delivery API** consumed by the frontend. The API is **hosted on Azure as a Web App**, with media stored in **Azure Blob Storage** and content in **Azure SQL Database**.
 
 ---
 
@@ -36,7 +37,7 @@ It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **
  
 - 🟣 **Platform:** [ASP.NET Core (.NET 9)](https://dotnet.microsoft.com/)  
 - 🧩 **CMS:** [Umbraco CMS 16](https://umbraco.com/)  
-- 🔑 **Headless API:** Umbraco Content Delivery API  
+- 🔑 **Headless API:** Umbraco Content Delivery API, hosted as **Azure Web App**
 - ☁️ **Storage:**  
   - Azure Blob Storage (media + ImageSharp caching)  
   - Azure SQL Database (content & configuration)  
