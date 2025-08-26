@@ -1,4 +1,4 @@
-﻿﻿# ⚛️ Dynamic Portfolio v3 - Backend
+﻿ # Dynamic Portfolio v3 - Backend
 
 <!-- Badges -->
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
