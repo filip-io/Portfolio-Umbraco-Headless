@@ -12,7 +12,7 @@
 
 ## 📖 Intro  
 
-This repository contains the **backend** project for my [Dynamic Portfolio v3 project](https://github.com/filip-io/Portfolio-Umbraco-React). 
+This is my **backend project** for my [Dynamic Portfolio v3 project](https://github.com/filip-io/Portfolio-Umbraco-React). 
 
 It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **Headless Delivery API** consumed by the frontend. The API is **hosted on Azure as a Web App**, with media stored in **Azure Blob Storage** and content in **Azure SQL Database**.
 
@@ -81,7 +81,7 @@ dotnet run
 
 &nbsp;
 
-## Architecture diagram
+## 🏛️ Architecture diagram
 
 ```mermaid
 flowchart TD
