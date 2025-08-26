@@ -13,8 +13,7 @@
 
 This repository contains the **backend** project for my [Dynamic Portfolio v3 project](https://github.com/filip-io/Portfolio-Umbraco-React). 
 
-It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **Headless Delivery API** consumed by the frontend.  
-Media and content are stored in **Azure Blob Storage** and **Azure SQL Database**.
+It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **Headless Delivery API** consumed by the frontend. Media and content are stored in **Azure Blob Storage** and **Azure SQL Database**.
 
 ---
 
