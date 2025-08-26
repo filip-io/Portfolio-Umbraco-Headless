@@ -1,4 +1,4 @@
-﻿# ⚛️ Dynamic Portfolio v3 - Backend
+﻿﻿# ⚛️ Dynamic Portfolio v3 - Backend
 
 <!-- Badges -->
 [![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
@@ -76,3 +76,15 @@ dotnet restore
 
 # run locally
 dotnet run
+```
+
+&nbsp;
+
+## Architecture diagram
+
+```mermaid
+flowchart TD
+    A[🌐 Umbraco API - .NET 9] --> B[☁️ Azure SQL Database]
+    A --> C[☁️ Azure Blob Storage]
+
+```
