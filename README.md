@@ -85,7 +85,7 @@ dotnet run
 
 ```mermaid
 flowchart TD
-    A[🌐 Umbraco API - .NET 9] --> B[☁️ Azure SQL Database]
-    A --> C[☁️ Azure Blob Storage]
+    A[🌐 Umbraco API - .NET 9] <--> B[☁️ Azure SQL Database]
+    A <--> C[☁️ Azure Blob Storage]
 
 ```
