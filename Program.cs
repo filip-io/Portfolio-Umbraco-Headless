@@ -18,12 +18,15 @@ builder.Services.AddCors(options =>
         // Restrictive CORS for production
         options.AddPolicy("FrontendPolicy", policy =>
         {
-            policy.WithOrigins("https://filip-io.github.io")
+            policy.WithOrigins(
+                    "https://filip-io.github.io",
+                    "https://filipnilsson.com")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
     }
 });
+
 
 // Configure Umbraco
 builder.CreateUmbracoBuilder()
