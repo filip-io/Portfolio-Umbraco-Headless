@@ -20,7 +20,8 @@ builder.Services.AddCors(options =>
         {
             policy.WithOrigins(
                     "https://filip-io.github.io",
-                    "https://filipnilsson.com")
+                    "https://filipnilsson.com",
+                    "https://portfolio-umbraco-react.pages.dev")
                   .AllowAnyMethod()
                   .AllowAnyHeader();
         });
