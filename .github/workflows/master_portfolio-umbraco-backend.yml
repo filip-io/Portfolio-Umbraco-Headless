@@ -1,12 +1,7 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - portfolio-umbraco-backend
 
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - '**/README.md'
-  workflow_dispatch:
+  workflow_dispatch:  # Manual start only
 
 env:
   DOTNET_VERSION: '9.x'
