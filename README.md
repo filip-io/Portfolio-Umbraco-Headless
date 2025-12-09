@@ -26,13 +26,6 @@ It is built with **ASP.NET Core (.NET 9)** and **Umbraco CMS 16**, exposing a **
 ---
 
 
-## ​🌐 Live Demo
-
-🔗 [Visit my Portfolio](https://filip-io.github.io/Portfolio-Umbraco-React/)
-
-&nbsp;
-
-
 ## 🛠️ Tech Stack  
  
 - 🟣 **Platform:** [ASP.NET Core (.NET 9)](https://dotnet.microsoft.com/)  
